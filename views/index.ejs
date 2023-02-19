@@ -1,0 +1,32 @@
+<%- include('templates/header', {tituloWeb: 'Bitcoin S.A.'}) %>
+<body>
+    <div class="contenedor-inicio flex">
+        <% if(message.length > 0) { %>
+            <div class="mensaje-cuenta">
+                <%= message %>
+            </div>
+        <% } %>
+        <% if(invalidLogin.length > 0) { %>
+            <div class="mensaje-error">
+                <%= invalidLogin %>
+            </div>
+        <% } %>
+        <div class="mensaje-inicio flex">
+            <p class="nombre centrar">Bitcoin S.A.</p>
+        </div>
+        <div class="datos-inicio flex">
+            <div class="login">
+                <form class="inicio-sesion" action="/login" method="POST">
+                    <h2 class="titulo centrar">Iniciar sesión</h2>
+                    <input type="email" class="correo" placeholder="Correo electrónico" name="CorreoElectronico" required>
+                    <input type="password" class="pass" placeholder="Contraseña" name="Contrasena" required>
+                    <button type="submit" class="btn">Ingresar</button>
+                </form>
+                <div class="crear-cuenta centrar">
+                    <a class="negrita" href="<%= url %>">Crear cuenta</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<%- include('templates/header', {tituloWeb: 'Usuario banca en línea - Bitcoin S.A.' }) %>
+
+    <body>
+        <div class="contenedor-usuario">
+            <% if(mensaje.length > 0) { %>
+                <div class="mensaje-error" id="mensajeAlerta">
+                    <%= mensaje %>
+                </div>
+            <% } %>
+
+            <!-- el usuario no tiene cuentas - muestra esta alerta -->
+            <div class="no-cuenta" id="no-cuentas-alert"></div>
+
+            <header class="cabezera">
+                <h2 class="centrar">Bitcoin S.A.</h2>
+                <form action="/logout" method="post" class="salir btn-cerrar"><button>ⓧ Salir</button></form>
+            </header>
+            <div class="contenedor-informacion-usuario flex">
+                <div class="informacion-usuario flex">
+                    <h2 class="flex-item negrita f-fix">Resumen de productos</h2>
+                    <div class="cuentas-bancarias flex-item">
+                        <h2 class="negrita">Cuentas bancarias</h2>
+                        <p class="nombre-cliente">
+                            <%= nombre %>
+                        </p>
+                        <table class="cuentas-cliente">
+                            <tr class="cabezera-tabla">
+                                <th>Tipo</th>
+                                <th>No. cuenta</th>
+                                <th>Saldo (Q.)</th>
+                            </tr>
+                            <!-- se carga cada cuenta del usuario -->
+                            <% for (var i=0; i < vals; i++) { %>
+                                <tr>
+                                    <td>
+                                        <%= cuentas[i].DesTipoCuenta %>
+                                    </td>
+                                    <td>
+                                        <%= cuentas[i].CodigoCuenta %>
+                                    </td>
+                                    <td>
+                                        <%= cuentas[i].Saldo.toFixed(2) %>
+                                    </td>
+                                </tr>
+                                <% } %>
+                        </table>
+                        <div class="opciones-cuenta flex">
+                            <button class="btn" onclick="mostrarMenu('transferir')">⇄ Transferir</button>
+                            <button class="btn" onclick="mostrarMenu('editar')">✎ Editar</button>
+                            <button class="btn" onclick="mostrarMenu('crear')">+ Crear</button>
+                            <button class="btn" onclick="mostrarMenu('eliminar')">↩ Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- opcion transferir -->
+        <div class="alerta flex" id="transferir">
+            <form action="/transferir" method="post" class="optuser flex">
+                <p class="dato-ayuda centrar">Considere que la transferencia será exitosa sólo si tiene<br>saldo suficiente en la cuenta seleccionada y los datos de la<br>cuenta de destino coinciden.</p>
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <input name="codigoCliente" type="text" value="<%= idcliente %>" style="display: none;" class="rinp">
+                        <label class="titulo-dato" for="cuentaOrigen">Cuenta origen</label><br>
+                        <select id="cuentaOrigen" required name="cuentaOrigen" class="rlst">
+                            <% for (var i=0; i < vals; i++) { %>
+                                <option value="<%= cuentas[i].CodigoCuenta %>" data-saldo-disponible="<%= cuentas[i].Saldo %>"><%= cuentas[i].CodigoCuenta %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="dato">
+                        <label class="titulo-dato" for="cuentaDestino">Cuenta destino</label><br>
+                        <input id="cuentaDestino" type="number" placeholder="Cuenta destino" name="cuentaDestino" required class="rinp" maxlength="5">
+                    </div>
+                </div>
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <label class="titulo-dato" for="montoTransferir">Monto transferir</label><br>
+                        <input id="montoTransferir" type="number" placeholder="Monto a transferir" name="montoTransferir" required class="rinp" min="1" step=".01">
+                    </div>
+                    <div class="dato">
+                        <label class="titulo-dato" for="tipoCuentaDestino">Tipo de cuenta destino</label><br>
+                        <select id="tipoCuentaDestino" required name="tipoCuentaDestino" class="rlst">
+                            <option value="1" selected>Ahorro</option>
+                            <option value="2">Monetaria</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <button type="submit" class="btn btn-accion">Transferir</button>
+                        <button id="cn-transfer" class="btn btn-cancelar" onclick="cerrarBoton(event, 'transferir');">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- opcion editar -->
+        <div class="alerta flex" id="editar">
+            <form action="/actualizar-usuario" method="post" class="optuser flex">
+                <p class="dato-ayuda centrar">Acá puede actualizar los datos de su cuenta, considere que no pueden<br>quedar campos en blanco si son obligatorios</p>
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <label class="titulo-dato" for="PrimerNombre">Primer nombre <span class="obligatorio">*</span></label><br>
+                        <input id="PrimerNombre" type="text" placeholder="Primer nombre" name="PrimerNombre" required value="<%= datos.PrimerNombre %>">
+                    </div>
+                    <div class="dato">
+                        <label class="titulo-dato" for="SegundoNombre">Segundo nombre</label><br>
+                        <input id="SegundoNombre" type="text" placeholder="Segundo nombre" name="SegundoNombre" value="<%= datos.SegundoNombre %>">
+                    </div>
+                </div>
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <label class="titulo-dato" for="PrimerApellido">Primer apellido <span class="obligatorio">*</span></label><br>
+                        <input id="PrimerApellido" type="text" placeholder="Primer apellido" name="PrimerApellido" required value="<%= datos.PrimerApellido %>">
+                    </div>
+                    <div class="dato">
+                        <label class="titulo-dato" for="SegundoApellido">Segundo apellido</label><br>
+                        <input id="SegundoApellido" type="text" placeholder="Segundo apellido" name="SegundoApellido" value="<%= datos.SegundoApellido %>">
+                    </div>
+                </div>
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <label class="titulo-dato" for="Telefono">Teléfono <span class="obligatorio">*</span></label><br>
+                        <input id="Telefono" type="tel" placeholder="Número de teléfono" required name="Telefono" maxlength="8" value="<%= datos.Telefono %>">
+                    </div>
+                    <div class="dato">
+                        <label class="titulo-dato" for="Direccion">Dirección <span class="obligatorio">*</span></label><br>
+                        <input id="Direccion" type="text" placeholder="Dirección de residencia" required name="Direccion" value="<%= datos.Direccion %>">
+                    </div>
+                </div>
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <label class="titulo-dato" for="CorreoElectronico">Correo electrónico <span class="obligatorio">*</span></label><br>
+                        <input id="CorreoElectronico" type="email" placeholder="Correo electrónico" required name="CorreoElectronico" value="<%= datos.CorreoElectronico %>">
+                    </div>
+                    <div class="dato">
+                        <label class="titulo-dato" for="Contrasena">Contraseña <span class="obligatorio">*</span></label><br>
+                        <input id="Contrasena" type="password" placeholder="Contraseña" required minlength="8" name="Contrasena" value="<%= pass %>">
+                    </div>
+                </div>
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <button type="submit" class="btn btn-accion">Actualizar</button>
+                        <button id="cn-transfer" class="btn btn-cancelar" onclick="cerrarBoton(event, 'editar');">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- opcion crear -->
+        <div class="alerta flex" id="crear">
+            <form action="/crear-cuenta" method="post" class="optuser flex">
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <input name="CodigoCliente" type="text" value="<%= idcliente %>" style="display: none;" class="rinp">
+                        <label class="titulo-dato" for="TipoCuenta">Seleccione el tipo de cuenta</label><br>
+                        <select id="TipoCuenta" required name="TipoCuenta">
+                            <option value="1" selected>Ahorro</option>
+                            <option value="2">Monetaria</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <button type="submit" class="btn btn-accion">Crear</button>
+                        <button id="cn-transfer" class="btn btn-cancelar" onclick="cerrarBoton(event, 'crear');">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- opcion eliminar -->
+        <div class="alerta flex" id="eliminar">
+            <form action="/eliminar-cuenta" method="post" class="optuser flex">
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <label class="titulo-dato" for="CodigoCuenta">No. de cuenta</label><br>
+                        <input id="CodigoCuenta" type="text" placeholder="Número de cuenta" name="CodigoCuenta" required maxlength="5" class="rinp">
+                    </div>
+                </div>
+                <div class="dato-ayuda flex">
+                    <div class="dato">
+                        <button type="submit" class="btn btn-accion">Eliminar</button>
+                        <button id="cn-transfer" class="btn btn-cancelar" onclick="cerrarBoton(event, 'eliminar');">Cancelar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <script>
+            // asignar valor maximo a transferir por defecto
+            var numCuentas = parseInt('<%-vals%>'),
+                listaCuentaOrigen = document.getElementById('cuentaOrigen'),
+                montoTransferir = document.getElementById('montoTransferir'),
+                mensajeAlerta = document.getElementById('mensajeAlerta')
+
+            window.onload = function() {
+                if (numCuentas > 0) {
+                    montoTransferir.max = listaCuentaOrigen.options[listaCuentaOrigen.selectedIndex].dataset.saldoDisponible
+                }
+
+                // aplicar estilos al mensaje de informacion
+                mensajeAlerta.style.animation = 'temp 5s ease-in-out'
+
+                setTimeout(function () {
+                    noCuentas.style.removeProperty('animation')
+                    mensajeAlerta.style.display = 'none'
+                }, 5000)
+
+            }
+
+            // asignar nuevo valor maximo a transferir en base
+            // al saldo disponible en la cuenta seleccionada
+            listaCuentaOrigen.onchange = function() {
+                var nuevoMaximo = listaCuentaOrigen.options[listaCuentaOrigen.selectedIndex].dataset.saldoDisponible
+                // input.max = SaldoCuenta
+                montoTransferir.max = nuevoMaximo
+            }
+
+            // mostrar opciones al usuario
+            var noCuentas = document.getElementById('no-cuentas-alert')
+
+            function mostrarMenu(e) {
+                var mn = document.getElementById(e)
+
+                if (numCuentas > 0) {
+                    mn.style.display = 'flex'
+                } else {
+                    switch (e) {
+                        case 'eliminar':
+                            noCuentas.innerHTML = 'No tienes ninguna cuenta creada para eliminar.'
+                            noCuentas.style.animation = 'temp 5s ease-in-out 1'
+
+                            setTimeout(function () {
+                            noCuentas.style.removeProperty('animation')
+                            }, 3000)
+                            break
+                        case 'transferir':
+                            noCuentas.innerHTML = 'No tienes ninguna cuenta creada para hacer una transferencia.'
+                            noCuentas.style.animation = 'temp 5s ease-in-out 1'
+
+                            setTimeout(function () {
+                            noCuentas.style.removeProperty('animation')
+                            }, 3000)
+                            break
+                        default:
+                            // crear, actualizar
+                            mn.style.display = 'flex'
+                            break
+                    }
+                }
+
+            }
+
+            // limpiar/reestablecer valores
+            function reestablecer() {
+                var lst = document.getElementsByClassName('rlst'),
+                    inp = document.getElementsByClassName('rinp')
+
+                // reestablecer valores de los input
+                for (var i = 0; i < inp.length; i++) {
+                    inp[i].value = ''
+                }
+
+                // reestablecer valores de los select
+                for (var j = 0; j < lst.length; j++) {
+                    lst[j].selectedIndex = 0
+                }
+
+                // reestablecer valor maximo a transferir si hay cuentas
+                if (numCuentas > 0) {
+                    montoTransferir.max = listaCuentaOrigen.options[0].dataset.saldoDisponible
+                }
+
+                // click cuenta3.saldo=600 -> cancelar -> input.max=saldoPrimeraOpcion
+            }
+
+            // cerrar menu
+            function cerrarBoton(evt, idmenu) {
+                // evita envio de formulario al hacer click en cancelar
+                evt.preventDefault()
+
+                let mn = document.getElementById(idmenu)
+                mn.style.display = 'none'
+
+                reestablecer()
+            }
+        </script>
+    </body>
+
+    </html>

@@ -1,0 +1,65 @@
+<%- include('templates/header', {tituloWeb: 'Formulario de registro'}) %>
+<body>
+    <div class="contenedor-registro flex">
+        <% if(alertMessage.length > 0) { %>
+            <div class="mensaje-registro">
+                <%= alertMessage %>
+            </div>
+        <% } %>
+        <header class="centrar cabezera"><a class="titulo" href="<%= url %>">Bitcoin S.A.</a></header>
+        <form action="/registrar-usuario" method="post" class="formulario-registro flex">
+            <h2 class="titulo dato centrar">Crear usuario</h2>
+            <div class="dato">
+                <label class="titulo-dato" for="PrimerNombre">Primer nombre <span class="obligatorio">*</span></label><br>
+                <input id="PrimerNombre" type="text" placeholder="Primer nombre" name="PrimerNombre" required>
+            </div>
+            <div class="dato">
+                <label class="titulo-dato" for="SegundoNombre">Segundo nombre</label><br>
+                <input id="SegundoNombre" type="text" placeholder="Segundo nombre" name="SegundoNombre">
+            </div>
+            <div class="dato">
+                <label class="titulo-dato" for="PrimerApellido">Primer apellido <span class="obligatorio">*</span></label><br>
+                <input id="PrimerApellido" type="text" placeholder="Primer apellido" name="PrimerApellido" required>
+            </div>
+            <div class="dato">
+                <label class="titulo-dato" for="SegundoApellido">Segundo apellido</label><br>
+                <input id="SegundoApellido" type="text" placeholder="Segundo apellido" name="SegundoApellido">
+            </div>
+            <div class="dato">
+                <label class="titulo-dato" for="TipoIdentificacion">Tipo de identificación <span class="obligatorio">*</span></label><br>
+                <select id="TipoIdentificacion" required name="TipoIdentificacion">
+                    <option value="1" selected>DPI</option>
+                    <option value="2">Pasaporte</option>
+                </select>
+            </div>
+            <div class="dato">
+                <label class="titulo-dato" for="Identificacion">DPI/Pasaporte <span class="obligatorio">*</span></label><br>
+                <input id="Identificacion" type="text" placeholder="DPI o pasaporte" required name="Identificacion">
+            </div>
+            <div class="dato">
+                <label class="titulo-dato" for="FechaNacimiento">Fecha de nacimiento <span class="obligatorio">*</span></label><br>
+                <input id="FechaNacimiento" type="date" required name="FechaNacimiento" pattern="[0-9]{2}-[0-9]{2}-[0-9]{4}" min="1900-01-01" max="2003-11-25">
+            </div>
+            <div class="dato">
+                <label class="titulo-dato" for="Telefono">Teléfono <span class="obligatorio">*</span></label><br>
+                <input id="Telefono" type="tel" placeholder="Número de teléfono" required name="Telefono" maxlength="8">
+            </div>
+            <div class="dato">
+                <label class="titulo-dato" for="Direccion">Dirección <span class="obligatorio">*</span></label><br>
+                <input id="Direccion" type="text" placeholder="Dirección de residencia" required name="Direccion">
+            </div>
+            <div class="dato">
+                <label class="titulo-dato" for="CorreoElectronico">Correo electrónico <span class="obligatorio">*</span></label><br>
+                <input id="CorreoElectronico" type="email" placeholder="Correo electrónico" required name="CorreoElectronico">
+            </div>
+            <div class="dato">
+                <label class="titulo-dato" for="Contrasena">Contraseña <span class="obligatorio">*</span></label><br>
+                <input id="Contrasena" type="password" placeholder="Contraseña" required minlength="8" name="Contrasena">
+            </div>
+            <div class="dato">
+                <button class="btn">Enviar datos</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
