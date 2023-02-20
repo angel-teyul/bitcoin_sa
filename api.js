@@ -1,6 +1,7 @@
 // paquete para conexion/solitud a base de datos
 const sql = require('mssql')
 
+console.log('websocket added')
 
 // paquete para montar el servidor web
 const express = require('express')
